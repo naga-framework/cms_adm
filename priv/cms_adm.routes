@@ -1,0 +1,16 @@
+[
+
+ { "/login",        [{app,cms_adm},{ctrl,adm_auth}      ,{action,login}],[]} 
+,{ "/logout",       [{app,cms_adm},{ctrl,adm_auth}      ,{action,logout}],[]} 
+,{ "/iforgot/[...]",[{app,cms_adm},{ctrl,adm_auth}      ,{action,iforgot}],[]} 
+
+,{ "/articles",     [{app,cms_adm},{ctrl,adm_articles}  ,{action,index}],[]}
+,{ "/article/[...]",[{app,cms_adm},{ctrl,adm_articles}  ,{action,article}],[]}
+
+,{ "/users",        [{app,cms_adm},{ctrl,adm_users}     ,{action,index}],[]}
+,{ "/profile",      [{app,cms_adm},{ctrl,adm_users}     ,{action,profile}],[]} 
+
+,{ "/",             [{app,cms_adm},{ctrl,adm_dashboard} ,{action,index}],[]}
+,{ "/[...]",        [{app,cms_adm},{ctrl,adm_dashboard} ,{action,index}],[]}
+
+].
