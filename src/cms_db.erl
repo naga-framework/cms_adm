@@ -30,6 +30,7 @@ new(T,Attrs) when is_map(Attrs)->
     R = ?MODULE:new_record(T),
     lists:foldl(fun({F,V},N)->?MODULE:set_value(F,V,N)end,R,maps:to_list(Attrs)).
 
+find(Type, {Index,K}) -> db_util:find(Type, {Index,K}).
 
 attribute_names(T) -> ?MODULE:field_names(T).
 attribute_types(T) -> ?MODULE:field_types(T).
