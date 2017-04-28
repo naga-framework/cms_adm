@@ -1,7 +1,7 @@
 -module(adm_articles).
 -export([index/3
-         ,article/3
-         ,event/1
+        ,article/3
+        ,event/1
         ]).
 -default_action(index).
 -actions([index]).
@@ -15,28 +15,14 @@
 % CONTROLLER
 %--------------------------------------------------------------------------------
 index(<<"GET">>, _, #{identity:=Identity} = Ctx) -> 
-  VendorsCSS = [{gentelella, [bootstrap3,fontawesome,
-                nprogress,icheck,datatables,
-                pnotify,gentelella]}],              
-  VendorsJS = [{gentelella, [jquery,bootstrap3,fastclick,nprogress,icheck,
-               datatables,jszip,pdfmake,pnotify,starrr,gentelella]}],
-  Bindings = adm_lib:bindings(Identity,VendorsCSS,VendorsJS),
+  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),
   Articles = kvs:entries(kvs:get(feed,article), article, undefined),
   {ok, Bindings ++ [{articles, Articles}]}.
-
 
 article(<<"GET">>, [<<"add">>|R], #{identity:=Identity} = Ctx) ->
-  VendorsCSS = [{gentelella, [bootstrap3,fontawesome,
-                              nprogress,icheck,datatables,
-                              pnotify,gentelella]},
-                {simplemde}],              
-  VendorsJS = [{gentelella, [jquery,bootstrap3,fastclick,nprogress,icheck,
-                             datatables,jszip,pdfmake,pnotify,starrr,gentelella]},
-              {simplemde}],
-  Bindings = adm_lib:bindings(Identity,VendorsCSS,VendorsJS),
+  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),
   Articles = kvs:entries(kvs:get(feed,article), article, undefined),
   {ok, Bindings ++ [{articles, Articles}]}.
-
 
 %--------------------------------------------------------------------------------
 % EVENT

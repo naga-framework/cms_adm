@@ -10,3 +10,7 @@ is_moderator => acl:is_moderator(Email),
    is_blocked=> acl:is_blocked(Email),
    user      => User:to_maps()
   }.
+
+update(#{user:=#{email:=Email}}=Identity,New) ->
+  case Email == New:get(email) of false -> ok;
+    true -> wf:user(Identity#{user=>New:to_maps()}) end.

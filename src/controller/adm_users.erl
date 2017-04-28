@@ -15,16 +15,7 @@
 % INDEX CONTROLLER
 %--------------------------------------------------------------------------------
 index(<<"GET">>, _, #{identity:=Identity} = Ctx) -> 
-  io:format("Identity ~p~n",[Identity]),
-  VendorsCSS = [{gentelella,[bootstrap3,fontawesome,
-                             nprogress,icheck,datatables,
-                             pnotify,gentelella]}],              
-  VendorsJS  = [{gentelella,[jquery,bootstrap3,fastclick,
-                             nprogress,icheck,datatables,
-                             jszip,pdfmake,pnotify,starrr,gentelella]}],
-
-  Bindings = adm_lib:bindings(Identity,VendorsCSS,VendorsJS),
-  
+  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),
   %%FIXME:pagination?
   Users = kvs:entries(kvs:get(feed,xuser), xuser, undefined),
   {ok, Bindings ++ [{users, Users}]}.
@@ -33,68 +24,53 @@ index(<<"GET">>, _, #{identity:=Identity} = Ctx) ->
 % PROFILE CONTROLLER
 %--------------------------------------------------------------------------------
 profile(<<"GET">>, _, #{identity:=Identity} = Ctx) -> 
-  VendorsCSS = [{gentelella,[bootstrap3,fontawesome,
-                             nprogress,icheck,prettify,select2,switchery,starrr,
-                             pnotify,gentelella]}],
-  VendorsJS  = [{gentelella,[jquery,bootstrap3,fastclick,progressbar,
-                             nprogress,raphael,morris,icheck,moment,
-                             daterangepicker,wysiwyg,hotkeys,prettify,
-                             tagsinput,switchery,select2,parsley,autosize,
-                             autocomplete,pnotify,starrr,gentelella]}],
-  Bindings = adm_lib:bindings(Identity,VendorsCSS,VendorsJS),
+  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),
   {ok, Bindings}.
       
-
-%--------------------------------------------------------------------------------
-% ACCESS
-%--------------------------------------------------------------------------------      
-%%TODO when session expire lock the user, ask him to login 
-access(undefined,User)         -> false;
-access(#{is_admin:=true},User) -> true;
-access(#{is_admin:=false, user:=U},User) -> 
-  Id1 = U:get(id),
-  Id2 = proplists:get_value(id,User), 
-  Id1 =:= Id2 andalso Id1 /= undefined andalso Id2 /= undefined.
-
-update_identity(#{user:=U}=Identity,New) ->
-  case U:get(id) == New:get(id) of false -> ok;
-    true -> wf:user(Identity#{user=>New}) end.
-
 %--------------------------------------------------------------------------------
 % EVENT HANDLING
-%--------------------------------------------------------------------------------      
-event({update,userInfo,User}) -> 
-  Identity = wf:user(),
-  case access(Identity,User) of
-    true ->  Id = proplists:get_value(id,User),
-             Firstname = wf:q(firstname),
-             Lastname = wf:q(lastname), 
-             {ok,U} = xuser:get(Id),
-             case {Firstname,Lastname} of
-                {<<>>,<<>>} -> adm_lib:notify(error,"error udpate profile", "empty fields"); 
-                _ ->  U1 = U:set(firstname,Firstname),
-                      U2 = U1:set(lastname,Lastname),
-                      case catch U2:save() of
-                        {ok,New} -> update_identity(Identity,New), 
-                          adm_lib:notify(success,"Udpate profile", "profile updated.");
-                        Err -> adm_lib:notify(error,"Error udpate profile", wf:to_list(Err) )
-                      end
-             end;
-    false -> adm_lib:notify(error,"Udpate profile", "not authorized.")
-  end;
+%--------------------------------------------------------------------------------
+event(init) ->    
+  io:format(">>>>ADM USERS EVT:init~n",[]);
+
+event({update,userInfo,Email}) -> updateUserInfo(wf:user(),Email);
+event({change,password,User})  -> changePassword(wf:user(),User);
+event(Event) -> 
+  wf:info(?MODULE,"Unknown Event: ~p~n",[Event]).
 
 
-event({change,password,User}) ->
+%--------------------------------------------------------------------------------
+% INTERNAL
+%--------------------------------------------------------------------------------
+% updateUserInfo
+% -------------------------------------------------------------------------------
+updateUserInfo(Identity,Email) ->
+  case acl:write(Identity,Email,firstname) =:= allow andalso 
+       acl:write(Identity,Email,lastname)  =:= allow of
+    true -> {ok, User} = xuser:find_by_email(Email),
+            Id = User:get(id),
+            {ok,U} = xuser:get(Id), 
+            U1 = lists:foldl(fun(F,A)-> A:set(F,wf:q(F)) end,U,[firstname,lastname]),
+            case catch U1:save() of
+              {ok,New} -> identity:update(Identity,New), 
+                adm_lib:notify(success,"Udpate profile", "profile updated.");
+              Err -> adm_lib:notify(error,"Error udpate profile", wf:to_list(Err) )
+            end;
+    false-> adm_lib:notify(error,"Udpate profile", "not authorized.")
+  end.
+
+% -------------------------------------------------------------------------------
+% changePassword
+% -------------------------------------------------------------------------------
+changePassword(Identity,Email) ->
   Identity = wf:user(),
-  case access(Identity,User) of
-    true ->  io:format("USER ~p",[User]),
-             Password = wf:q(password),
+  case acl:write(Identity,Email,password) =:= allow of
+    true ->  Password = wf:q(password),
              Confirm = wf:q(confirm),
              case Password =:= Confirm of
-              true -> Id = proplists:get_value(id,User),
-                      {ok,U} = xuser:get(Id),
+              true -> {ok, U} = xuser:find_by_email(Email),
                       case catch U:update_password(Password) of
-                        {ok,New} -> update_identity(Identity,New),  
+                        {ok,New} -> identity:update(Identity,New),  
                           adm_lib:notify(success,"Change password", "password updated.");
                         Err -> adm_lib:notify(error,"Error change password", wf:to_list(Err))
                       end;
@@ -102,7 +78,4 @@ event({change,password,User}) ->
              end;
              
     false -> adm_lib:notify(error,"Udpate password", "not authorized.")
-  end;
-
-event(Event) -> 
-  wf:info(?MODULE,"Unknown Event: ~p~n",[Event]).
+  end.

@@ -13,4 +13,6 @@
 
 -record(feature,{id,name}).
 
+-include("style.hrl").
+
 -endif.
