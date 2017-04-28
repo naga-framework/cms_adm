@@ -41,6 +41,12 @@ prepare_json([],Acc) -> Acc;
 prepare_json([{K,undefined}|T],Acc) -> prepare_json(T,[{K,<<>>}]++Acc);
 prepare_json([{K,V}|T],Acc) -> prepare_json(T,[{K,V}]++Acc).
 
+
+find_by_email(Email) -> 
+  case ?db:find(?model, {email,Email}) of
+    [] -> {error, notfound};
+    [R]-> {ok, R};
+    E -> E end.
 % -----------------------------------------------------------------------------
 % extract string
 % -----------------------------------------------------------------------------
@@ -113,6 +119,7 @@ check_credential(EnteredPassword,R) ->
   case pbkdf2:pbkdf2(Hmac,EnteredPassword, Salt, Iterations, DerivedLength) of
     {ok, Key} -> true;
     _ -> false end.
+
 
 % -----------------------------------------------------------------------------
 % validations test before storing record.
