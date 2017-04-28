@@ -65,6 +65,9 @@ admin(Email,Name,Pass) ->
                      {password,Pass}]),
   case User:save() of
     {ok, U} ->
+      acl:grant(U,{write,Email,firstname}),
+      acl:grant(U,{write,Email,lastname}),
+      acl:grant(U,{write,Email,password}),
       acl:grant(U, admin),
       acl:grant(U, author),
       acl:grant(U, moderator);
