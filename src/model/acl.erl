@@ -73,6 +73,12 @@ is_moderator(Email) when is_list(Email) -> acl:check_access({user,Email},{featur
 is_blocked(U) when is_tuple(U)  -> is_blocked(U:get(email));
 is_blocked(Email) when is_list(Email) -> acl:check_access({user,Email},{feature,blocked}) =:= allow.
 
+
+write(#{is_admin:=true},_Obj,_Field) -> allow;
+write(#{user:=#{email:=Email}}=_Identity,Obj,Field) -> 
+    Feature = {write,Obj,Field}, 
+    acl:check_access({user,Email},{feature,Feature}).
+
 % -----------------------------------------------------------------------------
 % 
 % -----------------------------------------------------------------------------
@@ -99,6 +105,10 @@ check(Keys) ->
         [] -> none;
         [#access{action = Action} | _] -> Action end.
 
+check_access(#{user := #{email:=Email}}, Feature) ->
+    Query = [ {{user,Email},Feature} ],
+    check(Query);
+
 check_access(#xuser{email = Email}, Feature) ->
     Query = [ {{user,Email},Feature} ],
     check(Query);
@@ -108,3 +118,5 @@ check_access({user, Email}, Feature) ->
     case kvs:index(xuser,email, Email) of
         [] -> [];
         [U|_] -> check_access(U, Feature) end.
+
+
