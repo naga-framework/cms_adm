@@ -11,26 +11,12 @@
 -include("cms.hrl").
 
 
--define(CSS,[{gentelella, [bootstrap3,fontawesome,
-                              nprogress,icheck,progressbar,
-                              jqvmap,moment,daterangepicker,
-                              pnotify,gentelella]}]).
-
--define(JS,[{gentelella,[jquery,bootstrap3,fastclick,
-                            nprogress,chartjs,gauge,
-                            progressbar,icheck,skycons,flot,
-                            flot_orderbars,flot_spline,flot_curvedlines,
-                            datejs,jqvmap,moment,
-                            daterangepicker,pnotify,gentelella]}]).
-
 %--------------------------------------------------------------------------------
 % INDEX CONTROLLER
 %--------------------------------------------------------------------------------
 index(<<"GET">>, _, #{identity:=Identity} = Ctx)   -> 
-  Bindings = adm_lib:bindings(Identity,?CSS,?JS),  
-  io:format("Bindings ~p~n",[Bindings]),
+  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),  
   {ok, Bindings}.
-
 
 %--------------------------------------------------------------------------------
 % EVENT HANDLING (ws)
