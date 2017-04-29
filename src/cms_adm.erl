@@ -38,7 +38,7 @@ ensure_loaded() ->
   end.
 
 ensure_dir() ->
-  Data = wf:config(cms_adm, data_dir, [".","data"] ),
+  Data = wf:config(cms_adm, data_dir, filename:join([".","data"]) ),
   DB   = filename:join([Data, "db"]),
   file:make_dir(Data),
   file:make_dir(DB).
