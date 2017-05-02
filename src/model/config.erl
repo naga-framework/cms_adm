@@ -50,7 +50,7 @@ attribute_idx(_)   -> ?db:attribute_idx(?MODULE).
 
 attributes(R)-> ?db:attributes(R).
 
-get(Id)      -> kvs:get(config,Id).
+get(Id)      -> case kvs:get(config,Id) of {ok,C} -> C:get(value); E -> E end.
 get(F,R)     -> ?db:get_value(F,R).
 set(F,V,R)   -> ?db:set_value(F,V,R).
 new()        -> ?db:new_record(?MODULE).
@@ -65,3 +65,8 @@ prepare_json([{K,V}|T],Acc) -> prepare_json(T,[{K,V}]++Acc).
 
 
 save(R) -> kvs:put(R).
+
+% -----------------------------------------------------------------------------
+% 
+% -----------------------------------------------------------------------------
+

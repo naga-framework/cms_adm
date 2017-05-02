@@ -46,15 +46,11 @@ login(<<"POST">>, _, #{'_base_url' := BaseUrl}) ->
   end.
 
 bindings(BaseUrl) ->
-  Vendors = [jquery,bootstrap3,fontawesome,nprogress,animate,pnotify,gentelella],
-  CSS = gentelella:vendors(css,Vendors),
-  JS  = gentelella:vendors(js,Vendors),
    [{login_action, BaseUrl ++ ["/login"]},
     {login_name, "CMS Admin Login"},
     {register_action, BaseUrl ++ ["/register"]},
     {register_name, "CMS Admin Register"},
-    {wsFormRegister, wsFormRegister()},
-    {page,[{css,CSS},{js,JS}]}
+    {wsFormRegister, wsFormRegister()}
    ].
 
 check_user(Email,Pass) when is_binary(Email)->

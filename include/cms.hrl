@@ -6,13 +6,11 @@
 -define(APP_VSN,"v0.0.1").
 -define(JSON(X), jiffy:encode(X)).
 
--define(TABLES, [config,xuser,acl,article,attachment,category]). %%naga:models()
+-define(TABLES, [config,xuser,acl,article,attachment,category]).
 
 -define(attrs(X), record_info(fields,X)).
 -define(table(X,Keys), #table{name=X ,container=feed,fields=?attrs(X),keys=Keys}).
 
 -record(feature,{id,name}).
-
--include("style.hrl").
 
 -endif.

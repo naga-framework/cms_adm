@@ -9,7 +9,5 @@
 %--------------------------------------------------------------------------------
 % CONTROLLER
 %--------------------------------------------------------------------------------
-'404'(_, _, Ctx)   -> 
-  CSS =[bootstrap3,fontawesome,nprogress,gentelella],
-  JS  =[jquery,bootstrap3,fastclick,nprogress,gentelella],
-  {ok, adm_lib:bindings(CSS,JS)}.
+'404'(_, _, #{identity:=Identity} = Ctx) -> 
+  {ok, adm_lib:bindings(Identity)}.

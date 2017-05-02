@@ -60,7 +60,7 @@ admin() ->
   admin(Email,Name,Pass).
 
 admin(Email,Name,Pass) ->
-  User  = xuser:new([   {email,Email},
+  User  = xuser:new([{email,Email},
                      {username,Name},
                      {password,Pass}]),
   case User:save() of
@@ -68,9 +68,16 @@ admin(Email,Name,Pass) ->
       acl:grant(U,{write,Email,firstname}),
       acl:grant(U,{write,Email,lastname}),
       acl:grant(U,{write,Email,password}),
-      acl:grant(U, admin),
+
       acl:grant(U, author),
-      acl:grant(U, moderator);
+      acl:grant(U,{create,category}),
+      acl:grant(U,{create,article}),
+
+      acl:grant(U, admin),
+      acl:grant(U,{add,user}),
+      acl:grant(U,{block,user}),
+      acl:grant(U,{reset,password});
+
     Err -> Err
   end.
 

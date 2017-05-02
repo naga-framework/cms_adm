@@ -15,7 +15,7 @@
 % INDEX CONTROLLER
 %--------------------------------------------------------------------------------
 index(<<"GET">>, _, #{identity:=Identity} = Ctx)   -> 
-  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),  
+  Bindings = adm_lib:bindings(Identity),  
   {ok, Bindings}.
 
 %--------------------------------------------------------------------------------

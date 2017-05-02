@@ -15,12 +15,12 @@
 % CONTROLLER
 %--------------------------------------------------------------------------------
 index(<<"GET">>, _, #{identity:=Identity} = Ctx) -> 
-  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),
+  Bindings = adm_lib:bindings(Identity),
   Articles = kvs:entries(kvs:get(feed,article), article, undefined),
   {ok, Bindings ++ [{articles, Articles}]}.
 
 article(<<"GET">>, [<<"add">>|R], #{identity:=Identity} = Ctx) ->
-  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),
+  Bindings = adm_lib:bindings(Identity),
   Articles = kvs:entries(kvs:get(feed,article), article, undefined),
   {ok, Bindings ++ [{articles, Articles}]}.
 

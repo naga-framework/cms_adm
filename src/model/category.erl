@@ -20,7 +20,6 @@ attribute_idx(_)   -> ?db:attribute_idx(?MODULE).
 
 attributes(R)-> ?db:attributes(R).
 
-
 get(F,R)     -> ?db:get_value(F,R).
 set(F,V,R)   -> ?db:set_value(F,V,R).
 new()        -> ?db:new_record(?MODULE).
@@ -42,3 +41,9 @@ before_create(R) -> N = ?db:set_value(modified,naga:to_seconds(),R),
                     {ok, N}.
 
 save(R)    -> ?db:save(R).
+
+% -----------------------------------------------------------------------------
+% 
+% -----------------------------------------------------------------------------
+
+ 

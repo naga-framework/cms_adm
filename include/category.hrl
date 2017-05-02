@@ -4,14 +4,15 @@
 -include_lib("kvs/include/kvs.hrl").
 -include("cms_types.hrl").
 
--define(category_keys,[path]).
+-define(category_keys,[owner_id,name]).
 -record(category, {?ITERATOR(feed),
            created        = 0  :: seconds(),
            modified       = 0  :: seconds(),
-           path           = [] :: path(),
+           author_id      = -1 :: fk(),
+           name           = [] :: string(),
            title          = [] :: string(),
-           description    = [] :: string(),
-           text           = [] :: text()
+           desc           = [] :: string(),
+           media          = [] :: list()
           }).
 
 -endif.

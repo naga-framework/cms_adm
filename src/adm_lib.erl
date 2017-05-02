@@ -19,41 +19,12 @@ redirect(Sec,Redirect) ->
 
 refresh() -> wf:wire("window.location=window.location;"). 
 
-
-css(Vendors) -> 
-  lists:foldr(fun({X,L},Acc) -> [X:vendors(css,L)|Acc];
-                 ({X},Acc)   -> [X:vendors(css)|Acc]
-              end, [], Vendors).
-
-js(Vendors) -> 
-  lists:foldr(fun({X,L},Acc) -> [X:vendors(js,L)|Acc];
-                 ({X},Acc)   -> [X:vendors(js)|Acc]
-              end, [], Vendors).
-
-bindings(Identity, VendorsCSS, VendorsJS) ->               
-  CSS = css(VendorsCSS),
-  JS  = js(VendorsJS),
-   [
-    {identity, Identity},
-    {app, [{name,?APP_NAME},
-           {vsn,?APP_VSN},
-           {credit, ?CREDIT}
-           ]},
-    {page,[{css,CSS},
-           {title,"CMS Demo"},
-           {js,JS}]}
-   ].
-
-bindings(VendorsCSS, VendorsJS) ->               
-  CSS = gentelella:vendors(css,VendorsCSS),
-  JS  = gentelella:vendors(js,VendorsJS),
-   [
-    {app, [{name,?APP_NAME},
-           {vsn,?APP_VSN},
-           {credit, ?CREDIT}
-           ]},
-    {page,[
-           {css,CSS},
-           {title,"CMS Demo"},
-           {js,JS}]}
-   ].
+bindings(Identity) ->               
+ [
+  {identity, Identity},
+  {app, [{name,?APP_NAME},
+         {vsn,?APP_VSN},
+         {credit, ?CREDIT}
+         ]},
+  {page,[{title,"CMS Demo"}]}
+ ].

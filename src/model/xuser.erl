@@ -85,8 +85,7 @@ before_create(R) ->
     {ok,U} -> {error, already_exist};
     {error,notfound} -> 
       Password = R:get(password),
-      {ok,Cfg} = config:get(password),
-      {Hmac, Salt, Iterations, DerivedLength} = Cfg:get(value),
+      {Hmac, Salt, Iterations, DerivedLength} = config:get(password),
       {ok,Key} = pbkdf2:pbkdf2(Hmac, Password, Salt, Iterations, DerivedLength),
       R1 = R:set(password,Key),
       {ok, R1}
@@ -102,8 +101,7 @@ before_update(Old,New) ->
 save(R)    -> ?db:save(R).
 
 update_password(Pass,R) ->
- {ok,Cfg} = config:get(password),
- {Hmac, Salt, Iterations, DerivedLength} = Cfg:get(value),
+ {Hmac, Salt, Iterations, DerivedLength} = config:get(password),
  {ok,Key} = pbkdf2:pbkdf2(Hmac, Pass, Salt, Iterations, DerivedLength),
  R1 = R:set(password,Key),
  R1:save().
@@ -114,8 +112,7 @@ exist(Email) -> case kvs:index(?model,email,Email)of[]->false;_ ->true end.
 
 check_credential(EnteredPassword,R) -> 
   Key = R:get(password),
-  {ok,Cfg} = config:get(password),
-  {Hmac, Salt, Iterations, DerivedLength} = Cfg:get(value),  
+  {Hmac, Salt, Iterations, DerivedLength} = config:get(password),  
   case pbkdf2:pbkdf2(Hmac,EnteredPassword, Salt, Iterations, DerivedLength) of
     {ok, Key} -> true;
     _ -> false end.

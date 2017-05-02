@@ -15,7 +15,7 @@
 % INDEX CONTROLLER
 %--------------------------------------------------------------------------------
 index(<<"GET">>, _, #{identity:=Identity} = Ctx) -> 
-  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),
+  Bindings = adm_lib:bindings(Identity),
   %%FIXME:pagination?
   Users = kvs:entries(kvs:get(feed,xuser), xuser, undefined),
   {ok, Bindings ++ [{users, Users}]}.
@@ -24,7 +24,7 @@ index(<<"GET">>, _, #{identity:=Identity} = Ctx) ->
 % PROFILE CONTROLLER
 %--------------------------------------------------------------------------------
 profile(<<"GET">>, _, #{identity:=Identity} = Ctx) -> 
-  Bindings = adm_lib:bindings(Identity,?_CSS,?_JS),
+  Bindings = adm_lib:bindings(Identity),
   {ok, Bindings}.
       
 %--------------------------------------------------------------------------------
